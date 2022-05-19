@@ -1,6 +1,6 @@
 from typing import List
-from fastapi import APIRouter, Body, Depends
-from starlette.status import HTTP_201_CREATED
+from fastapi import APIRouter, Body, Depends, HTTPException
+from starlette.status import HTTP_201_CREATED, HTTP_404_NOT_FOUND
 
 from app.models.users import UserCreate, UserPublic
 from app.db.repositories.users import UsersRepository
@@ -16,6 +16,19 @@ async def get_all_users() -> List[dict]:
         {"id": 2, "name": "dudu"}
     ]
     return users
+
+
+@router.get("/{id}/", response_model=UserPublic, name="users:get-user-by-id")
+async def get_user_by_id(
+  id: int, users_repo: UsersRepository = Depends(get_repository(UsersRepository))
+) -> UserPublic:
+    user = await users_repo.get_user_by_id(id=id)
+
+    if not user:
+        raise HTTPException(status_code=HTTP_404_NOT_FOUND, detail="No user found with that id.")
+
+    return user
+
 
 
 @router.post("/", response_model=UserPublic, name="user:create-user", status_code=HTTP_201_CREATED)

@@ -1,3 +1,5 @@
+import os
+
 from fastapi import FastAPI
 from databases import Database
 from app.core.config import DATABASE_URL
@@ -7,6 +9,7 @@ logger = logging.getLogger(__name__)
 
 
 async def connect_to_db(app: FastAPI) -> None:
+    DB_URL = f"{DATABASE_URL}_test" if os.environ.get("TESTING") else DATABASE_URL
     database = Database(DATABASE_URL, min_size=2, max_size=10)  # these can be configured in config as well
 
     try:
