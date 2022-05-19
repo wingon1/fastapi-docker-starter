@@ -21,3 +21,10 @@ docker exec -it {CONTAINER ID} bash
 alembic revision -m "create_main_tables"
 ```
 ---
+
+**TDD test code**
+```
+docker ps
+docker exec -it {CONTAINER ID} bash
+pytest -v
+```
